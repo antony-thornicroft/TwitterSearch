@@ -19,32 +19,32 @@ namespace TwitterSearch.Models
     public class Twitter
     {
         // Singleton instance
-        private readonly static Lazy<Twitter> _instance = new Lazy<Twitter>(
-            () => new Twitter(GlobalHost.ConnectionManager.GetHubContext<TwitterHub>().Clients, GlobalHost.ConnectionManager.GetHubContext<TwitterHub>()));
+        //private readonly static Lazy<Twitter> _instance = new Lazy<Twitter>(
+        //    () => new Twitter(GlobalHost.ConnectionManager.GetHubContext<TwitterHub>().Clients, GlobalHost.ConnectionManager.GetHubContext<TwitterHub>()));
 
-        public static Twitter Instance
-        {
-            get
-            {
-                return _instance.Value;
-            }
-        }
+        //public static Twitter Instance
+        //{
+        //    get
+        //    {
+        //        return _instance.Value;
+        //    }
+        //}
 
-        private readonly ConcurrentDictionary<string, Tweet> _tweets = new ConcurrentDictionary<string, Tweet>();
+        //private readonly ConcurrentDictionary<string, Tweet> _tweets = new ConcurrentDictionary<string, Tweet>();
 
-        private readonly IHubContext _context;
+        //private readonly IHubContext _context;
 
-        private IHubConnectionContext<dynamic> Clients
-        {
-            get;set;
-        }
+        //private IHubConnectionContext<dynamic> Clients
+        //{
+        //    get;set;
+        //}
 
-        private Twitter(IHubConnectionContext<dynamic> clients, IHubContext context)
-        {
-            Clients = clients;
-            _context = context;
-            _tweets.Clear();
-        }
+        //private Twitter(IHubConnectionContext<dynamic> clients, IHubContext context)
+        //{
+        //    Clients = clients;
+        //    _context = context;
+        //    _tweets.Clear();
+        //}
 
         private Thread _thread;
         private IFilteredStream _filteredStream;
@@ -92,7 +92,7 @@ namespace TwitterSearch.Models
                 _thread.Abort();
             }
 
-            _context.Clients.Client(connectionId).addTweetsToPage(connectionId, "stoptweetText", "stoptweetCreator", "stoptweetLocation");
+            //_context.Clients.Client(connectionId).addTweetsToPage(connectionId, "stoptweetText", "stoptweetCreator", "stoptweetLocation");
             //Clients.All.addTweetsToPage("stoptweetId", "stoptweetText", "stoptweetCreator", "stoptweetLocation");
         }
 
@@ -156,7 +156,7 @@ namespace TwitterSearch.Models
                     tweetLocation += string.Format("{0}, {1}", matchingLocation.Coordinate1.Latitude, matchingLocation.Coordinate1.Longitude);
                     tweetLocation += string.Format("{0}, {1}", matchingLocation.Coordinate2.Latitude, matchingLocation.Coordinate2.Longitude);
                 }
-                _context.Clients.Client(connectionId).addTweetsToPage(tweetId, tweetText, tweetCreator, tweetLocation);
+                //_context.Clients.Client(connectionId).addTweetsToPage(tweetId, tweetText, tweetCreator, tweetLocation);
                 //Clients.All.addTweetsToPage(tweetId, tweetText, tweetCreator, tweetLocation);
             };
             _thread = new Thread(_filteredStream.StartStreamMatchingAllConditions);

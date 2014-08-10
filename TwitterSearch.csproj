@@ -291,6 +291,8 @@
     <Content Include="Views\Home\Chat.cshtml" />
     <Content Include="Views\Twitter\Index.cshtml" />
     <Content Include="Views\Twitter\Search.cshtml" />
+    <Content Include="Views\Twitter\HeatMap.cshtml" />
+    <Content Include="Views\Twitter\HeatMap2.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

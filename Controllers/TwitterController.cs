@@ -20,5 +20,12 @@ namespace TwitterSearch.Controllers
 
             return View(tweet);
         }
+
+        public ActionResult HeatMap()
+        {
+            var tweet = new TweetSearch();
+
+            return View(tweet);
+        }
     }
 }
