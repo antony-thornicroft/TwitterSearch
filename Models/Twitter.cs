@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net;
 using System.Threading;
 using Microsoft.AspNet.SignalR;
@@ -18,38 +20,66 @@ namespace TwitterSearch.Models
     //only one instance should run on the server - called by multiple instances of the hub class
     public class Twitter
     {
-        // Singleton instance
-        //private readonly static Lazy<Twitter> _instance = new Lazy<Twitter>(
-        //    () => new Twitter(GlobalHost.ConnectionManager.GetHubContext<TwitterHub>().Clients, GlobalHost.ConnectionManager.GetHubContext<TwitterHub>()));
+        private readonly static Lazy<Twitter> instance = new Lazy<Twitter>(() => new Twitter(GlobalHost.ConnectionManager.GetHubContext<TwitterHub>().Clients));
 
-        //public static Twitter Instance
-        //{
-        //    get
-        //    {
-        //        return _instance.Value;
-        //    }
-        //}
+        private readonly ConcurrentDictionary<string, Tweet> _tweets = new ConcurrentDictionary<string, Tweet>();
+        private List<Tweet> _currentTweets;
 
-        //private readonly ConcurrentDictionary<string, Tweet> _tweets = new ConcurrentDictionary<string, Tweet>();
+        private readonly TimeSpan _updateInterval = TimeSpan.FromMilliseconds(20000);
+        private readonly Timer _timer;
 
-        //private readonly IHubContext _context;
+        private IHubConnectionContext<dynamic> Clients
+        {
+            get;
+            set;
+        }
 
-        //private IHubConnectionContext<dynamic> Clients
-        //{
-        //    get;set;
-        //}
+        public static Twitter Instance
+        {
+            get
+            {
+                return instance.Value;
+            }
+        }
 
-        //private Twitter(IHubConnectionContext<dynamic> clients, IHubContext context)
-        //{
-        //    Clients = clients;
-        //    _context = context;
-        //    _tweets.Clear();
-        //}
+        private Twitter(IHubConnectionContext<dynamic> clients)
+        {
+            Clients = clients;
 
-        private Thread _thread;
-        private IFilteredStream _filteredStream;
+            _tweets.Clear();
 
-        public void StartSearch(string connectionId, string hastTag, string userName)
+            var tweets = new List<Tweet>
+            {
+                new Tweet { TweetId = "Test TweetId from constructor 1", TweetText = "Test TweetText from constructor 1" },
+                new Tweet { TweetId = "Test TweetId from constructor 2", TweetText = "Test TweetText from constructor 2" }
+            };
+            tweets.ForEach(tweet => _tweets.TryAdd(tweet.TweetId, tweet));
+
+            _timer = new Timer(UpdateTweet, null, _updateInterval, _updateInterval);
+        }
+
+        private void UpdateTweet(object state)
+        {
+            if (_currentTweets == null)
+                _currentTweets = new List<Tweet>();
+
+            var myTweets = _tweets.Values.Where(tweet => !_currentTweets.Contains(tweet)).ToList();
+
+            foreach (var tweet in _tweets.Values)
+                _currentTweets.Add(tweet);
+
+            Clients.All.addTweetCollection(myTweets);
+        }
+        public IEnumerable<Tweet> GetAllTweets()
+        {
+            return _tweets.Values;
+        }
+        public void AddTweetToList(Tweet tweet)
+        {
+            
+        }
+
+        public void StartSearch(string userLoginName, string hastTag, string userNameSearch)
         {
             try
             {
@@ -62,16 +92,17 @@ namespace TwitterSearch.Models
 
                 if (!string.IsNullOrEmpty(hastTag))
                 {
-                    
                 }
-                if (!string.IsNullOrEmpty(userName))
+                if (!string.IsNullOrEmpty(userNameSearch))
                 {
-
                 }
+
+                //_connections.Add(userLoginName, Context.ConnectionId);
+                //var identity = Thread.CurrentPrincipal.Identity;
 
                 //GetTweetsByUser();
                 //GetTweetsBySearchParameters();
-                GetLiveFilteredStream(connectionId);
+                GetLiveFilteredStream("connectionId");
             }
             catch (Exception ex)
             {
@@ -79,62 +110,23 @@ namespace TwitterSearch.Models
             }
         }
 
-        public void StopSearch(string connectionId)
-        {
-            //how do we abort the correct thread?
-            if (_filteredStream != null)
-            {
-                _filteredStream.StopStream();
-            }
-
-            if (_thread != null && _thread.IsAlive)
-            {
-                _thread.Abort();
-            }
-
-            //_context.Clients.Client(connectionId).addTweetsToPage(connectionId, "stoptweetText", "stoptweetCreator", "stoptweetLocation");
-            //Clients.All.addTweetsToPage("stoptweetId", "stoptweetText", "stoptweetCreator", "stoptweetLocation");
-        }
-
-        private void GetTweetImages()
-        {
-            //var tweet = Tweet.GetTweet(454952190915137536);
-            //var imageUrl = tweet.Entities.Medias.First().MediaURL;
-            //new WebClient().DownloadFile(imageUrl, @"c:\image.jpg");
-        }
-
-        private void GetTweetsByUser()
-        {
-            //var tweetsFromUser = Search.SearchTweets("from:ajt_84");
-            //foreach (var tweet in tweetsFromUser)
-            //{
-            //    Console.WriteLine(tweet.Creator.Name + " says: ");
-            //    Console.Write(tweet.Text);
-            //    Console.Write("\r\n");
-            //    Console.Write("\r\n");
-            //}
-        }
-
-        private void GetTweetsBySearchParameters()
-        {
-            //var searchParameter = Search.GenerateSearchTweetParameter("#WorldCup");
-
-            //searchParameter.Lang = Language.English;
-            //searchParameter.SearchType = SearchResultType.Popular;
-            //searchParameter.MaximumNumberOfResults = 200;
-            //searchParameter.Since = new DateTime(2013, 12, 1);
-
-            //var tweets = Search.SearchTweets(searchParameter);
-            //tweets.ForEach(t => Clients.All.addTweetsToPage(t.Text));
-        }
+        private Thread _thread;
+        private IFilteredStream _filteredStream;
 
         private void GetLiveFilteredStream(string connectionId)
         {
-            //Get tweets by town (w/radius)
+            //central london
+            //51.546073, -0.028270
+            //51.475066, -0.115603
 
-            //bethy green - switch the google maps co-ordinates
-            var coordinates1 = new Coordinates(-0.126390, 51.476198);
-            var coordinates2 = new Coordinates(0.004374, 51.553188);
+            //east england
+            //1.2958363, 52.9240094
+            //-2.811781, 50.737100
+
+            //top right
+            var coordinates1 = new Coordinates(-0.028270, 51.546073);
+            //bottom left
+            var coordinates2 = new Coordinates(-0.115603, 51.475066);
             var location = Geo.GenerateLocation(coordinates1, coordinates2);
 
             _filteredStream = Stream.CreateFilteredStream();
@@ -151,16 +143,60 @@ namespace TwitterSearch.Models
 
                 IEnumerable<ILocation> matchingLocations = args.MatchedLocations;
 
+                var tweetLat = tweet.Coordinates.Latitude.ToString();
+                string tweetLon = tweet.Coordinates.Longitude.ToString();
+
                 foreach (var matchingLocation in matchingLocations)
                 {
                     tweetLocation += string.Format("{0}, {1}", matchingLocation.Coordinate1.Latitude, matchingLocation.Coordinate1.Longitude);
                     tweetLocation += string.Format("{0}, {1}", matchingLocation.Coordinate2.Latitude, matchingLocation.Coordinate2.Longitude);
                 }
+
+                var newTweet = new Tweet
+                    {
+                        TweetId = tweetId,
+                        TweetCreator = tweetCreator,
+                        TweetLocation = tweetLocation,
+                        TweetText = tweetText
+                    };
+                _tweets.TryAdd(tweetId, newTweet);
+
+                //working
+                //Clients.All.addTweetsToPage(tweetId, tweetText, tweetCreator, tweetLocation, tweetLat, tweetLon);
+
                 //_context.Clients.Client(connectionId).addTweetsToPage(tweetId, tweetText, tweetCreator, tweetLocation);
-                //Clients.All.addTweetsToPage(tweetId, tweetText, tweetCreator, tweetLocation);
+                //Clients.Client(connectionId).addTweetsToPage(tweetId, tweetText, tweetCreator, tweetLocation);
             };
             _thread = new Thread(_filteredStream.StartStreamMatchingAllConditions);
             _thread.Start();
+        }
+
+        //public void StopSearch(string userLoginName)
+        //{
+            //remove uiser from he group
+            //_connections.Remove(name, Context.ConnectionId);
+
+            //_connections.Remove(userLoginName, Context.ConnectionId);
+
+            //this should be called when no one is in the group
+            //_twitter.StopSearch(Context.ConnectionId);
+        //}
+
+        public void StopSearch(string connectionId)
+        {
+            //how do we abort the correct thread?
+            //if (_filteredStream != null)
+            //{
+            //    _filteredStream.StopStream();
+            //}
+
+            //if (_thread != null && _thread.IsAlive)
+            //{
+            //    _thread.Abort();
+            //}
+
+            //_context.Clients.Client(connectionId).addTweetsToPage(connectionId, "stoptweetText", "stoptweetCreator", "stoptweetLocation");
+            //Clients.All.addTweetsToPage("stoptweetId", "stoptweetText", "stoptweetCreator", "stoptweetLocation");
         }
     }
 }

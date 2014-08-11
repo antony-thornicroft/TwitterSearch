@@ -58,14 +58,11 @@ C:\Users\Antony\documents\visual studio 2012\Projects\TwitterSearch\TwitterSearc
 C:\Users\Antony\documents\visual studio 2012\Projects\TwitterSearch\TwitterSearch\bin\System.Web.WebPages.Razor.xml
 C:\Users\Antony\documents\visual studio 2012\Projects\TwitterSearch\TwitterSearch\obj\Debug\TwitterSearch.dll
 C:\Users\Antony\documents\visual studio 2012\Projects\TwitterSearch\TwitterSearch\obj\Debug\TwitterSearch.pdb
-C:\Users\Antony\Documents\Visual Studio 2012\Projects\GitHub\TwitterSearch\TwitterSearch\bin\TwitterSearch.dll.config
-C:\Users\Antony\Documents\Visual Studio 2012\Projects\GitHub\TwitterSearch\TwitterSearch\bin\TwitterSearch.dll
-C:\Users\Antony\Documents\Visual Studio 2012\Projects\GitHub\TwitterSearch\TwitterSearch\bin\TwitterSearch.pdb
+C:\Users\Antony\Documents\Visual Studio 2012\Projects\GitHub\TwitterSearch\TwitterSearch\bin\Microsoft.AspNet.SignalR.Owin.dll
 C:\Users\Antony\Documents\Visual Studio 2012\Projects\GitHub\TwitterSearch\TwitterSearch\bin\Antlr3.Runtime.dll
 C:\Users\Antony\Documents\Visual Studio 2012\Projects\GitHub\TwitterSearch\TwitterSearch\bin\Autofac.dll
 C:\Users\Antony\Documents\Visual Studio 2012\Projects\GitHub\TwitterSearch\TwitterSearch\bin\EntityFramework.dll
 C:\Users\Antony\Documents\Visual Studio 2012\Projects\GitHub\TwitterSearch\TwitterSearch\bin\Microsoft.AspNet.SignalR.Core.dll
-C:\Users\Antony\Documents\Visual Studio 2012\Projects\GitHub\TwitterSearch\TwitterSearch\bin\Microsoft.AspNet.SignalR.Owin.dll
 C:\Users\Antony\Documents\Visual Studio 2012\Projects\GitHub\TwitterSearch\TwitterSearch\bin\Microsoft.AspNet.SignalR.SystemWeb.dll
 C:\Users\Antony\Documents\Visual Studio 2012\Projects\GitHub\TwitterSearch\TwitterSearch\bin\Microsoft.Owin.dll
 C:\Users\Antony\Documents\Visual Studio 2012\Projects\GitHub\TwitterSearch\TwitterSearch\bin\Microsoft.Owin.Host.SystemWeb.dll
@@ -118,4 +115,7 @@ C:\Users\Antony\Documents\Visual Studio 2012\Projects\GitHub\TwitterSearch\Twitt
 C:\Users\Antony\Documents\Visual Studio 2012\Projects\GitHub\TwitterSearch\TwitterSearch\bin\System.Web.WebPages.Razor.xml
 C:\Users\Antony\Documents\Visual Studio 2012\Projects\GitHub\TwitterSearch\TwitterSearch\obj\Debug\TwitterSearch.dll
 C:\Users\Antony\Documents\Visual Studio 2012\Projects\GitHub\TwitterSearch\TwitterSearch\obj\Debug\TwitterSearch.pdb
+C:\Users\Antony\Documents\Visual Studio 2012\Projects\GitHub\TwitterSearch\TwitterSearch\bin\TwitterSearch.dll.config
+C:\Users\Antony\Documents\Visual Studio 2012\Projects\GitHub\TwitterSearch\TwitterSearch\bin\TwitterSearch.dll
+C:\Users\Antony\Documents\Visual Studio 2012\Projects\GitHub\TwitterSearch\TwitterSearch\bin\TwitterSearch.pdb
 C:\Users\Antony\Documents\Visual Studio 2012\Projects\GitHub\TwitterSearch\TwitterSearch\obj\Debug\TwitterSearch.csprojResolveAssemblyReference.cache
