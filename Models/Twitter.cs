@@ -25,7 +25,7 @@ namespace TwitterSearch.Models
         private readonly ConcurrentDictionary<string, Tweet> _tweets = new ConcurrentDictionary<string, Tweet>();
         private List<Tweet> _currentTweets;
 
-        private readonly TimeSpan _updateInterval = TimeSpan.FromMilliseconds(20000);
+        private readonly TimeSpan _updateInterval = TimeSpan.FromMilliseconds(10000);
         private readonly Timer _timer;
 
         private IHubConnectionContext<dynamic> Clients
@@ -44,6 +44,8 @@ namespace TwitterSearch.Models
 
         private Twitter(IHubConnectionContext<dynamic> clients)
         {
+            //TODO clear the tweet object down every 000 tweets
+
             Clients = clients;
 
             _tweets.Clear();
@@ -74,6 +76,7 @@ namespace TwitterSearch.Models
         {
             return _tweets.Values;
         }
+
         public void AddTweetToList(Tweet tweet)
         {
             
@@ -115,18 +118,18 @@ namespace TwitterSearch.Models
 
         private void GetLiveFilteredStream(string connectionId)
         {
-            //central london
-            //51.546073, -0.028270
-            //51.475066, -0.115603
-
             //east england
-            //1.2958363, 52.9240094
-            //-2.811781, 50.737100
-
             //top right
-            var coordinates1 = new Coordinates(-0.028270, 51.546073);
+            var coordinates1 = new Coordinates(1.2958363, 52.9240094);
             //bottom left
-            var coordinates2 = new Coordinates(-0.115603, 51.475066);
+            var coordinates2 = new Coordinates(-2.811781, 50.737100);
+
+            //beth
+            //top right
+            //var coordinates1 = new Coordinates(-0.028270, 51.546073);
+            //bottom left
+            //var coordinates2 = new Coordinates(-0.115603, 51.475066);
+
             var location = Geo.GenerateLocation(coordinates1, coordinates2);
 
             _filteredStream = Stream.CreateFilteredStream();
@@ -143,9 +146,6 @@ namespace TwitterSearch.Models
 
                 IEnumerable<ILocation> matchingLocations = args.MatchedLocations;
 
-                var tweetLat = tweet.Coordinates.Latitude.ToString();
-                string tweetLon = tweet.Coordinates.Longitude.ToString();
-
                 foreach (var matchingLocation in matchingLocations)
                 {
                     tweetLocation += string.Format("{0}, {1}", matchingLocation.Coordinate1.Latitude, matchingLocation.Coordinate1.Longitude);
@@ -156,7 +156,8 @@ namespace TwitterSearch.Models
                     {
                         TweetId = tweetId,
                         TweetCreator = tweetCreator,
-                        TweetLocation = tweetLocation,
+                        TweetLatitude = tweet.Coordinates.Latitude.ToString(),
+                        TweetLongitude = tweet.Coordinates.Longitude.ToString(),
                         TweetText = tweetText
                     };
                 _tweets.TryAdd(tweetId, newTweet);

@@ -36,6 +36,7 @@ namespace TwitterSearch.Models
         public string TweetId { get; set; }
         public string TweetText { get; set; }
         public string TweetCreator { get; set; }
-        public string TweetLocation { get; set; }
+        public string TweetLatitude { get; set; }
+        public string TweetLongitude { get; set; }
     }
 }

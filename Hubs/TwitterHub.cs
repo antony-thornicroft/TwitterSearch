@@ -37,7 +37,7 @@ namespace TwitterSearch.Hubs
             return _twitterTicker.GetAllTweets();
         }
 
-        public void StartSearch()
+        public void StartSearch(string userLoginName, string hastTag, string userNameSearch)
         {
             _twitterTicker.StartSearch("userLoginName", "hastTag", "userNameSearch");
         }
